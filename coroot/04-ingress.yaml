@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: coroot-ingress
+  namespace: coroot
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - coroot.devsecops.domain.co.uk
+    secretName: wildcard-domain
+  rules:
+  - host: coroot.devsecops.domain.co.uk
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: coroot
+            port:
+              number: 80

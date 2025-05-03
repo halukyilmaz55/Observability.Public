@@ -1,0 +1,20 @@
+---
+# Source: coroot/charts/prometheus/templates/server/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    component: "server"
+    app: prometheus
+    release: coroot
+    chart: prometheus-15.16.1
+    heritage: Helm
+  name: coroot-prometheus-server
+subjects:
+  - kind: ServiceAccount
+    name: coroot-prometheus-server
+    namespace: coroot
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: coroot-prometheus-server

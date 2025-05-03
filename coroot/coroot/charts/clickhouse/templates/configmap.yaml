@@ -1,0 +1,27 @@
+---
+# Source: coroot/charts/clickhouse/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coroot-clickhouse
+  namespace: "coroot"
+  labels:
+    app.kubernetes.io/name: clickhouse
+    helm.sh/chart: clickhouse-3.1.6
+    app.kubernetes.io/instance: coroot
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: clickhouse
+data:
+  00_default_overrides.xml: |
+    <clickhouse>
+      <!-- Macros -->
+      <macros>
+        <shard from_env="CLICKHOUSE_SHARD_ID"></shard>
+        <replica from_env="CLICKHOUSE_REPLICA_ID"></replica>
+        <layer>coroot-clickhouse</layer>
+      </macros>
+      <!-- Log Level -->
+      <logger>
+        <level>information</level>
+      </logger>
+    </clickhouse>

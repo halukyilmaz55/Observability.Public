@@ -1,0 +1,19 @@
+---
+# Source: coroot/charts/prometheus/templates/server/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    component: "server"
+    app: prometheus
+    release: coroot
+    chart: prometheus-15.16.1
+    heritage: Helm
+  name: coroot-prometheus-server
+  namespace: coroot
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "10Gi"

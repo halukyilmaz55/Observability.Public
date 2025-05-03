@@ -1,0 +1,113 @@
+---
+# Source: coroot/templates/cluster-agent.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: coroot-cluster-agent
+  labels:
+    helm.sh/chart: coroot-0.18.14
+    app.kubernetes.io/name: coroot-cluster-agent
+    app.kubernetes.io/instance: coroot
+    app.kubernetes.io/version: "1.0.4"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: coroot/templates/cluster-agent.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: coroot-cluster-agent
+subjects:
+  - kind: ServiceAccount
+    name: coroot-cluster-agent
+    namespace: coroot
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: coroot/templates/cluster-agent.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: coroot-cluster-agent
+  labels:
+    helm.sh/chart: coroot-0.18.14
+    app.kubernetes.io/name: coroot-cluster-agent
+    app.kubernetes.io/instance: coroot
+    app.kubernetes.io/version: "1.0.4"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+      app.kubernetes.io/name: coroot-cluster-agent
+      app.kubernetes.io/instance: coroot
+---
+# Source: coroot/templates/cluster-agent.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coroot-cluster-agent
+  labels:
+    helm.sh/chart: coroot-0.18.14
+    app.kubernetes.io/name: coroot-cluster-agent
+    app.kubernetes.io/instance: coroot
+    app.kubernetes.io/version: "1.0.4"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: coroot-cluster-agent
+      app.kubernetes.io/instance: coroot
+  template:
+    metadata:
+      annotations:
+        checksum/config: a4e5f655a5b53ffdcfb7fdb5d2fa52625f977e80ae43775ed656e29604599adb
+      labels:
+        app.kubernetes.io/name: coroot-cluster-agent
+        app.kubernetes.io/instance: coroot
+    spec:
+      serviceAccountName: coroot-cluster-agent
+      securityContext:
+        {}
+      containers:
+        - name: cluster-agent
+          securityContext:
+            {}
+          image: "ghcr.io/coroot/coroot-cluster-agent:1.0.4"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LISTEN
+              value: ":8080"
+            - name: COROOT_URL
+              value: "http://coroot:8080"
+            - name: API_KEY
+              value: ""
+            - name: CONFIG_UPDATE_INTERVAL
+              value: "60s"
+            - name: CONFIG_UPDATE_TIMEOUT
+              value: "10s"
+            - name: METRICS_SCRAPE_INTERVAL
+              value: "15s"
+            - name: METRICS_SCRAPE_TIMEOUT
+              value: "10s"
+            - name: METRICS_WAL_DIR
+              value: ""
+            - name: PROFILES_SCRAPE_INTERVAL
+              value: "1m"
+            - name: PROFILES_SCRAPE_TIMEOUT
+              value: "10s"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 1Gi
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+              readOnly: false
+      volumes:
+        - emptyDir: {}
+          name: tmp

@@ -1,0 +1,44 @@
+---
+# Source: coroot/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: coroot
+  labels:
+    helm.sh/chart: coroot-0.18.14
+    app.kubernetes.io/name: coroot
+    app.kubernetes.io/instance: coroot
+    app.kubernetes.io/version: "1.8.12"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: coroot
+    app.kubernetes.io/instance: coroot
+---
+# Source: coroot/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: coroot-opentelemetry-collector
+  labels:
+    helm.sh/chart: coroot-0.18.14
+    app.kubernetes.io/name: coroot
+    app.kubernetes.io/instance: coroot
+    app.kubernetes.io/version: "1.8.12"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 4318
+      targetPort: http
+      protocol: TCP
+      name: otel-http
+  selector:
+    app.kubernetes.io/name: coroot
+    app.kubernetes.io/instance: coroot

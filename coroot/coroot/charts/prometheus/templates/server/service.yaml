@@ -1,0 +1,25 @@
+---
+# Source: coroot/charts/prometheus/templates/server/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: "server"
+    app: prometheus
+    release: coroot
+    chart: prometheus-15.16.1
+    heritage: Helm
+  name: coroot-prometheus-server
+  namespace: coroot
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    component: "server"
+    app: prometheus
+    release: coroot
+  sessionAffinity: None
+  type: "ClusterIP"
